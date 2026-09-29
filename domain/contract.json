@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "product": "非遗活动采购透明台账",
+  "source_context": "http://edu.people.com.cn/n1/2026/0924/c1006-40804947.html",
+  "actors": [
+    "学校采购员",
+    "供应方",
+    "审计人员"
+  ],
+  "states": [
+    "需求",
+    "询价",
+    "评审",
+    "履约",
+    "结算"
+  ],
+  "invariants": [
+    "关系回避",
+    "报价冻结",
+    "金额分录",
+    "分级公开"
+  ],
+  "sample_cases": [
+    {
+      "case_id": "09302-008-A",
+      "actor": "学校采购员",
+      "state": "需求"
+    },
+    {
+      "case_id": "09302-008-B",
+      "actor": "审计人员",
+      "state": "询价"
+    }
+  ],
+  "tags": [
+    "procurement-transparency",
+    "conflict-declaration"
+  ]
+}

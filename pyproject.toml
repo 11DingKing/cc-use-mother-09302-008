@@ -1,0 +1,6 @@
+[project]
+name = "domain-contract-09302-008"
+version = "0.1.0"
+description = "非遗活动采购透明台账的领域约定与校验工具"
+requires-python = ">=3.11"
+dependencies = []
