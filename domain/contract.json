@@ -4,8 +4,10 @@
   "source_context": "http://edu.people.com.cn/n1/2026/0924/c1006-40804947.html",
   "actors": [
     "学校采购员",
+    "评审委员",
     "供应方",
-    "审计人员"
+    "审计人员",
+    "公众"
   ],
   "states": [
     "需求",
@@ -18,7 +20,45 @@
     "关系回避",
     "报价冻结",
     "金额分录",
-    "分级公开"
+    "分级公开",
+    "连续台账",
+    "不可变分录",
+    "冲正不改写",
+    "签署串行化"
+  ],
+  "ledger_accounts": [
+    {"code": "1101", "name": "银行存款", "direction": "debit"},
+    {"code": "2101", "name": "应付合同款", "direction": "credit"},
+    {"code": "3101", "name": "履约支出", "direction": "debit"},
+    {"code": "5101", "name": "预算额度", "direction": "debit"},
+    {"code": "5102", "name": "预算拨款来源", "direction": "credit"},
+    {"code": "5201", "name": "已承诺预算", "direction": "debit"},
+    {"code": "5202", "name": "承诺准备", "direction": "credit"}
+  ],
+  "events": [
+    {"event": "BUDGET", "name": "预算登记", "at": "需求建立", "posting": ["5101/借", "5102/贷"]},
+    {"event": "COMMIT", "name": "合同承诺", "at": "合同签订", "posting": ["5201/借", "5202/贷"]},
+    {"event": "COMMIT_CHANGE", "name": "合同变更承诺调整", "at": "合同变更", "posting": ["按差额正负反向"]},
+    {"event": "ACCEPT", "name": "履约验收", "at": "验收（含部分验收）", "posting": ["3101/借", "2101/贷"]},
+    {"event": "PAYMENT", "name": "付款", "at": "依验收付款", "posting": ["2101/借", "1101/贷"]},
+    {"event": "REFUND", "name": "退款冲正", "at": "退款", "posting": ["1101/借", "2101/贷"]}
+  ],
+  "balance_rules": [
+    "累计合同承诺（含变更）<= 预算额度",
+    "累计验收金额 <= 当前合同承诺",
+    "累计付款净额（付款减退款）<= 累计验收金额",
+    "累计退款 <= 累计付款",
+    "最终验收时累计验收金额必须等于当前合同承诺",
+    "每条分录借贷合计相等，分录只能追加不得改写或删除"
+  ],
+  "freeze_rules": [
+    "评审开始即为冻结点：此前有效报价转为冻结版本，此后不得新增、替换、撤回报价",
+    "冻结同时锁定评委名单与供应关系回避声明",
+    "存在未回避关联关系的供应方不得提交报价且不得被授标"
+  ],
+  "visibility": [
+    {"viewer": "公众", "scope": "脱敏摘要：需求与联合学校、预算、状态、中标供应方及金额、验收与付款汇总；不含人员姓名、回避细节、未中标报价"},
+    {"viewer": "审计人员", "scope": "全量连续台账：回避声明、全部报价版本、评审签署、合同变更、验收付款退款、不可变分录哈希链与责任人"}
   ],
   "sample_cases": [
     {
@@ -34,6 +74,8 @@
   ],
   "tags": [
     "procurement-transparency",
-    "conflict-declaration"
+    "conflict-declaration",
+    "immutable-ledger",
+    "tiered-disclosure"
   ]
 }
